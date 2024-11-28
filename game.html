@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #74ebd5, #9face6);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            margin: 20px auto;
+            width: 320px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #333;
+            cursor: pointer;
+            background-color: #e6e6e6;
+            transition: background-color 0.3s ease;
+        }
+
+        .cell:hover {
+            background-color: #d1d1d1;
+        }
+
+        .cell.taken {
+            pointer-events: none;
+            background-color: #ccc;
+        }
+
+        .winner {
+            font-size: 20px;
+            margin-top: 20px;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .reset-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #ff7675;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background-color: #e74c3c;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome Rose</h1>
+    <h2>lets start the game</h2>
+    <div class="board" id="board"></div>
+    <div class="winner" id="winner"></div>
+    <button class="reset-btn" id="reset">Reset Game</button>
+    <script>
+        const board = document.getElementById('board');
+        const winnerDisplay = document.getElementById('winner');
+        const resetButton = document.getElementById('reset');
+        let currentPlayer = 'X';
+        let cells = Array(9).fill(null);
+
+        // Create the game board
+        function createBoard() {
+            board.innerHTML = ''; // Clear the board
+            cells = Array(9).fill(null); // Reset cell states
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.addEventListener('click', () => makeMove(i, cell));
+                board.appendChild(cell);
+            }
+            winnerDisplay.textContent = ''; // Clear winner message
+            board.style.pointerEvents = 'auto'; // Enable board interactions
+        }
+
+        // Handle a player's move
+        function makeMove(index, cell) {
+            if (!cells[index]) {
+                cells[index] = currentPlayer;
+                cell.textContent = currentPlayer;
+                cell.classList.add('taken');
+                if (checkWinner()) {
+                    winnerDisplay.textContent = `Player ${currentPlayer} wins!`;
+                    board.style.pointerEvents = 'none';
+                } else if (cells.every(cell => cell)) {
+                    winnerDisplay.textContent = 'It\'s a draw!';
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                }
+            }
+        }
+
+        // Check if there's a winner
+        function checkWinner() {
+            const winningCombos = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6]            // Diagonals
+            ];
+            return winningCombos.some(combo =>
+                combo.every(index => cells[index] === currentPlayer)
+            );
+        }
+
+        // Reset the game when the button is clicked
+        resetButton.addEventListener('click', () => {
+            currentPlayer = 'X'; // Reset to player X
+            createBoard(); // Recreate the board
+        });
+
+        createBoard(); // Initialize the game
+    </script>
+</body>
+
+</html>
